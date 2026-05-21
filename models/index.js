@@ -61,6 +61,15 @@ User.belongsToMany(User, {
 Favorite.belongsTo(Recipe,{foreignKey:"recipeId"})
 Recipe.hasMany(Favorite,{foreignKey:"recipeId",onDelete:"cascade"})
 
+
+Favorite.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Favorite, { foreignKey: "userId", onDelete: "cascade" });
+
+Collection.hasMany(CollectionRecipe, { foreignKey: "collectionId", onDelete: "cascade" });
+CollectionRecipe.belongsTo(Collection, { foreignKey: "collectionId" });
+
+Recipe.hasMany(CollectionRecipe, { foreignKey: "recipeId", onDelete: "cascade" });
+CollectionRecipe.belongsTo(Recipe, { foreignKey: "recipeId" });
 module.exports = {
   User,
   Recipe,

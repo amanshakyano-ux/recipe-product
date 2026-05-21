@@ -5,14 +5,18 @@ const authRoutes = require("./routes/authRoutes")
 const recipeRoutes = require("./routes/recipeRoutes")
 const reviewRoutes = require("./routes/review")
  const favoriteRoutes = require("./routes/favorite")
+ const collectionRoutes = require("./routes/collection") 
+ const followRoutes = require("./routes/follow")
 
 require("./models");
 const app = express()
 app.use(express.json())
+app.use("/api",authRoutes)
 app.use("/api/recipes", recipeRoutes)
+app.use("/api/collections", collectionRoutes)
 app.use("/api/reviews", reviewRoutes)
 app.use("/api/favorites", favoriteRoutes)
-app.use("/api",authRoutes)
+app.use("/api/follows",followRoutes)
 app.use((err,req,res,next)=>{
     return res.status(500).json({
       success:false,
