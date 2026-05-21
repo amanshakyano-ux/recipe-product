@@ -1,10 +1,58 @@
 const isStrInvalid = require("../utils/strValidation");
-const { Recipe } = require("../models/recipes");
 const s3 = require("../utils/s3Service");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { where } = require("sequelize");
-const { Category } = require("../models");
+const { Category, Recipe } = require("../models");
+const { Op } = require("sequelize");
 
+const searchRecipes = async (req, res, next) => {
+  try {
+    const { keyword, difficulty, dietType, cookingTime } = req.query;
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const offset = (page - 1) * limit;
+
+    const whereClause = {};
+
+    if (keyword) {
+      whereClause.title = {
+        [Op.like]: `%${keyword}%`,
+      };
+    }
+
+    if (difficulty) {
+      whereClause.difficulty = difficulty;
+    }
+
+    if (dietType) {
+      whereClause.dietType = dietType;
+    }
+
+    if (cookingTime) {
+      whereClause.cookingTime = {
+        [Op.lte]: Number(cookingTime),
+      };
+    }
+
+    const { count, rows: recipes } = await Recipe.findAndCountAll({
+      where: whereClause,
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({
+      success: true,
+      currentPage: page,
+      totalRecipes: count,
+      totalPages: Math.ceil(count / limit),
+      recipes,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 const createRecipe = async (req, res, next) => {
   try {
     const {
@@ -39,13 +87,12 @@ const createRecipe = async (req, res, next) => {
     }
 
     const userId = req.user.id;
-    
 
     let imageUrl = null;
 
     if (req.file) {
       const file = req.file;
-      console.log(file,"file");
+      console.log(file, "file");
 
       const fileName = `recipes/${Date.now()}-${file.originalname}`;
 
@@ -82,158 +129,157 @@ const createRecipe = async (req, res, next) => {
       recipe,
     });
   } catch (err) {
-     next(err);
+    next(err);
   }
 };
 
-
 const getAllRecipes = async (req, res, next) => {
   try {
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const offset = (page-1)*limit;
-
+    const offset = (page - 1) * limit;
 
     const recipes = await Recipe.findAll({
-    limit,offset,
-    order:[["createdAt","DESC"]]
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
     });
 
-    if(recipes.length===0){
-        return res.status(404).json({
-            success:false, message:"No recipes found for this user"
-        })
+    if (recipes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No recipes found for this user",
+      });
     }
     res.status(200).json({
-        success:true,
-        currentPage:page,
-        totalRecipes:recipes.length,
-        totalPages:Math.ceil(recipes.length/limit),
-        recipes
-    })
+      success: true,
+      currentPage: page,
+      totalRecipes: recipes.length,
+      totalPages: Math.ceil(recipes.length / limit),
+      recipes,
+    });
   } catch (err) {
     next(err);
-  } 
-}
+  }
+};
 
-const getOneRecipe = async(req,res,next)=>{
-    try{
-        const recipeId = Number(req.params.id);
-        const recipe = await Recipe.findByPk(recipeId);
-        if(!recipe){
-            return res.status(404).json({
-                success:false,
-                message:"Recipe not found"
-            })
-        }
-        res.status(200).json({
-            success:true,
-            recipe
-        })
-    } catch (err) {
-        next(err);
+const getOneRecipe = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const recipe = await Recipe.findByPk(recipeId);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
     }
-}
+    res.status(200).json({
+      success: true,
+      recipe,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-const getRecipesByUser = async(req,res,next)=>{
-    try{
-        const userId = req.user.id;
-        const limit= parseInt(req.query.limit)||10;
-        const page = parseInt(req.query.page)||1;
-        const offset = (page-1)*limit;
+const getRecipesByUser = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const offset = (page - 1) * limit;
 
-        const recipes = await Recipe.findAll({where:{userId}, limit, offset});
-        res.status(200).json({
-            success:true,
-            currentPage:page,
-            totalRecipes:recipes.length,
-            totalPages:Math.ceil(recipes.length/limit),
-            recipes
-        })
-    } catch (err) {
-        next(err);
+    const recipes = await Recipe.findAll({ where: { userId }, limit, offset });
+    res.status(200).json({
+      success: true,
+      currentPage: page,
+      totalRecipes: recipes.length,
+      totalPages: Math.ceil(recipes.length / limit),
+      recipes,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateRecipe = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const userId = req.user.id;
+    const recipe = await Recipe.findByPk(recipeId);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
     }
-}
-
-const updateRecipe = async(req,res,next)=>{
-    try{
-        const recipeId = Number(req.params.id); 
-        const userId = req.user.id;
-        const recipe = await Recipe.findByPk(recipeId);
-        if(!recipe){
-            return res.status(404).json({
-                success:false,
-                message:"Recipe not found"
-            })
-        }
-        if(recipe.userId !== userId){
-            return res.status(403).json({
-                success:false,
-                message:"You are not authorized to update this recipe"
-            })
-        }
-        const {
-            title,
-            description,
-            ingredients,
-            instructions,
-            cookingTime,
-            servings,
-            difficulty,
-            dietType,
-            prepTime,
-            category
-        } = req.body;
-
-        await recipe.update({
-            title,
-            description,
-            ingredients,
-            instructions,
-            cookingTime,
-            servings,
-            difficulty,
-            dietType,
-            prepTime,
-            category
-        });
-
-        res.status(200).json({
-            success:true,
-            message:"Recipe updated successfully",
-            recipe
-        })
-    } catch (err) {
-        next(err);
+    if (recipe.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this recipe",
+      });
     }
-}
-const deleteRecipe = async(req,res,next)=>{
-    try{
-        const recipeId = Number(req.params.id);
-        const userId = req.user.id;
-        const recipe = await Recipe.findByPk(recipeId);
-        if(!recipe){
-            return res.status(404).json({
-                success:false,
-                message:"Recipe not found"
-            })
-        }
-        if(recipe.userId !== userId){
-            return res.status(403).json({
-                success:false,
-                message:"You are not authorized to delete this recipe"
-            })
-        }
-        await recipe.destroy();
-        res.status(200).json({
-            success:true,
-            message:"Recipe deleted successfully"
-        })
-    } catch (err) {
-        next(err);
+    const {
+      title,
+      description,
+      ingredients,
+      instructions,
+      cookingTime,
+      servings,
+      difficulty,
+      dietType,
+      prepTime,
+      category,
+    } = req.body;
+
+    await recipe.update({
+      title,
+      description,
+      ingredients,
+      instructions,
+      cookingTime,
+      servings,
+      difficulty,
+      dietType,
+      prepTime,
+      category,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Recipe updated successfully",
+      recipe,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+const deleteRecipe = async (req, res, next) => {
+  try {
+    const recipeId = Number(req.params.id);
+    const userId = req.user.id;
+    const recipe = await Recipe.findByPk(recipeId);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
     }
-}
+    if (recipe.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this recipe",
+      });
+    }
+    await recipe.destroy();
+    res.status(200).json({
+      success: true,
+      message: "Recipe deleted successfully",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 const getRecipesByCategory = async (req, res, next) => {
   try {
     const category = req.params.category;
@@ -262,4 +308,13 @@ const getRecipesByCategory = async (req, res, next) => {
     next(err);
   }
 };
-module.exports = { createRecipe, getAllRecipes, getOneRecipe, getRecipesByUser, updateRecipe, deleteRecipe, getRecipesByCategory };
+module.exports = {
+  createRecipe,
+  getAllRecipes,
+  getOneRecipe,
+  getRecipesByUser,
+  updateRecipe,
+  deleteRecipe,
+  getRecipesByCategory,
+  searchRecipes
+};

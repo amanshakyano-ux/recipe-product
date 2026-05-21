@@ -34,8 +34,7 @@ const Recipe = sequelize.define("recipe", {
     allowNull: false,
   },
   imageUrl: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING
   },
   prepTime: {
     type: DataTypes.INTEGER,
