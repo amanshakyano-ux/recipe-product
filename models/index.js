@@ -58,6 +58,9 @@ User.belongsToMany(User, {
   foreignKey: "followerId",
 });
 
+Favorite.belongsTo(Recipe,{foreignKey:"recipeId"})
+Recipe.hasMany(Favorite,{foreignKey:"recipeId",onDelete:"cascade"})
+
 module.exports = {
   User,
   Recipe,

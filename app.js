@@ -4,12 +4,14 @@ const db = require("./utils/db-connection")
 const authRoutes = require("./routes/authRoutes")
 const recipeRoutes = require("./routes/recipeRoutes")
 const reviewRoutes = require("./routes/review")
+ const favoriteRoutes = require("./routes/favorite")
 
 require("./models");
 const app = express()
 app.use(express.json())
 app.use("/api/recipes", recipeRoutes)
 app.use("/api/reviews", reviewRoutes)
+app.use("/api/favorites", favoriteRoutes)
 app.use("/api",authRoutes)
 app.use((err,req,res,next)=>{
     return res.status(500).json({
