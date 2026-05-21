@@ -15,10 +15,10 @@ const Recipe = sequelize.define("recipe", {
     allowNull: false,
   },
   ingredients: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
   },
   instructions: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
   },
   cookingTime: {
     type: DataTypes.INTEGER,
