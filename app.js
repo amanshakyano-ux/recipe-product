@@ -72,13 +72,19 @@ app.get("/admin", (req, res) => {
 app.get("/forgot-password", (req, res) => {
   res.sendFile(path.join(__dirname, "public/html/forgotPassword.html"));
 });
+app.get("/recipe-detail", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/html/recipeDetails.html"));
+});
+app.get("/collection-detail", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/html/collectionDetail.html"));
+});
 app.use((err,req,res,next)=>{
     return res.status(500).json({
       success:false,
       message:err.message
    })
 })
-db.sync({alter:true})
+db.sync()
 .then(()=>{
     app.listen(process.env.PORT,()=>{
         console.log("Server is running")

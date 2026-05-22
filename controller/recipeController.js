@@ -1,7 +1,7 @@
 const isStrInvalid = require("../utils/strValidation");
 const s3 = require("../utils/s3Service");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { Category, Recipe } = require("../models");
+const { Category, Recipe,User,Review} = require("../models");
 const { Op } = require("sequelize");
 
 const searchRecipes = async (req, res, next) => {
@@ -140,6 +140,10 @@ const getAllRecipes = async (req, res, next) => {
     const offset = (page - 1) * limit;
 
     const recipes = await Recipe.findAll({
+      include:{
+        model: User,
+        attributes: ['id', 'name']
+      },
       limit,
       offset,
       order: [["createdAt", "DESC"]],
@@ -166,7 +170,21 @@ const getAllRecipes = async (req, res, next) => {
 const getOneRecipe = async (req, res, next) => {
   try {
     const recipeId = Number(req.params.id);
-    const recipe = await Recipe.findByPk(recipeId);
+    const recipe = await Recipe.findOne({
+      where: {
+        id: recipeId
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name']
+        },
+        {
+          model: Review,
+          include: [User]
+        }
+      ]
+    });
     if (!recipe) {
       return res.status(404).json({
         success: false,

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collections</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <h2>My Collections</h2>
+
+    <div class="nav-links">
+      <a href="/home">Home</a>
+      <a href="/favorites">Favorites</a>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Create Collection</h1>
+
+    <form id="collectionForm">
+      <div class="form-group">
+        <label>Collection Name</label>
+        <input type="text" id="collectionName" required>
+      </div>
+
+      <button type="submit">Create Collection</button>
+    </form>
+  </div>
+
+  <section class="recipes-container" id="collectionsContainer">
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/collections.js"></script>
+
+</body>
+</html>

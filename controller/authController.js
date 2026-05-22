@@ -104,6 +104,7 @@ if (user.isBanned) {
       success: true,
       message: "User logged in",
       token: generateToken(user.id),
+      user:user
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <h2>Admin Dashboard</h2>
+
+    <div class="nav-links">
+      <a href="/home">Home</a>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <section class="admin-section">
+
+    <h2>Dashboard Stats</h2>
+
+    <div class="admin-stats" id="dashboardStats">
+    </div>
+
+  </section>
+
+  <section class="admin-section">
+
+    <h2>All Users</h2>
+
+    <div id="usersContainer">
+    </div>
+
+  </section>
+
+  <section class="admin-section">
+
+    <h2>All Recipes</h2>
+
+    <div
+      class="recipes-container"
+      id="adminRecipesContainer"
+    >
+    </div>
+
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/admin.js"></script>
+
+</body>
+</html>

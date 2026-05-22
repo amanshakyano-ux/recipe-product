@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+
+    <h2>My Profile</h2>
+
+    <div class="nav-links">
+
+      <a href="/home">Home</a>
+
+      <a href="/my-recipes">My Recipes</a>
+
+      <a href="/favorites">Favorites</a>
+
+      <button id="logoutBtn">
+        Logout
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <!-- PROFILE -->
+
+  <section class="profile-section">
+
+    <div class="profile-card">
+
+      <img
+        id="profileImage"
+        src=""
+        alt="Profile Image"
+      >
+
+      <h2 id="userName">
+        Loading...
+      </h2>
+
+      <p id="userBio">
+      </p>
+
+      <div class="profile-stats">
+
+        <div>
+          <h3 id="followersCount">0</h3>
+          <p>Followers</p>
+        </div>
+
+        <div>
+          <h3 id="followingCount">0</h3>
+          <p>Following</p>
+        </div>
+
+        <div>
+          <h3 id="recipesCount">0</h3>
+          <p>Recipes</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- USER RECIPES -->
+
+  <section
+    class="recipes-container"
+    id="userRecipesContainer"
+  >
+
+  </section>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="../js/profile.js"></script>
+
+</body>
+</html>

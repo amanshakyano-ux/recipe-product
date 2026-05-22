@@ -102,10 +102,11 @@ const getFollowers = async (req, res, next) => {
     const userId = req.user.id;
     const followers = await Follow.findAll({ where: { followingId: userId } });
     if (followers.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No followers found",
-      });
+       return res.status(200).json({
+    success: true,
+    totalFollowers: 0,
+    followers: [],
+  });
     }
     res.status(200).json({
       success: true,
@@ -121,10 +122,11 @@ const getFollowing = async (req, res, next) => {
     const userId = req.user.id;
     const following = await Follow.findAll({ where: { followerId: userId } });
     if (following.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "You are not following anyone",
-      });
+      return res.status(200).json({
+    success: true,
+    totalFollowing: 0,
+    following: [],
+  });
     }
     res.status(200).json({
       success: true,

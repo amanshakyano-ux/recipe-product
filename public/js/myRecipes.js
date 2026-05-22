@@ -34,7 +34,7 @@ const showMyRecipes = (recipes) => {
       <p><b>Diet:</b> ${recipe.dietType}</p>
 
       <p><b>Cooking Time:</b> ${recipe.cookingTime} min</p>
-
+      <a href="/recipe-detail?id=${recipe.id}">View Details</a>
       <button onclick="deleteRecipe(${recipe.id})">
         Delete
       </button>
