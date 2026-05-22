@@ -8,11 +8,15 @@ const reviewRoutes = require("./routes/review")
  const collectionRoutes = require("./routes/collection") 
  const followRoutes = require("./routes/follow")
  const adminRoutes = require("./routes/adminRoutes")
+ const passwordRoutes = require("./routes/passwordRoutes");
 
 require("./models");
 const app = express()
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+
 app.use("/api",authRoutes)
+app.use("/api/password", passwordRoutes);
 app.use("/api/admin",adminRoutes)
 app.use("/api/recipes", recipeRoutes)
 app.use("/api/collections", collectionRoutes)

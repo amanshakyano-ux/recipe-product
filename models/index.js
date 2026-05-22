@@ -8,8 +8,18 @@ const { Follow } = require("./follows");
 const { Activity } = require("./activities");
 const { Category } = require("./categories");
 const { RecipeCategory } = require("./recipeCategories");
+const {ForgotPasswordRequest } = require("./forgotPasswordRequests")
+
 
 //one to many
+User.hasMany(ForgotPasswordRequest, {
+  foreignKey: "userId",
+  onDelete: "cascade",
+});
+
+ForgotPasswordRequest.belongsTo(User, {
+  foreignKey: "userId",
+});
 User.hasMany(Recipe, { foreignKey: "userId", onDelete: "cascade" });
 Recipe.belongsTo(User, { foreignKey: "userId" });
 
@@ -81,4 +91,5 @@ module.exports = {
   Activity,
   Category,
   RecipeCategory,
+  ForgotPasswordRequest
 };

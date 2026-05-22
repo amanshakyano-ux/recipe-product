@@ -110,4 +110,5 @@ if (user.isBanned) {
   }
 };
 
+
 module.exports = { register,login};
