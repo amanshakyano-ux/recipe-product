@@ -40,4 +40,27 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = { auth };
+
+const adminAuth = async(req,res,next) =>{
+
+    if(req.user.role !== "admin")
+    {
+        return res.status(403).json({
+            success:false,
+            message:"You dont have permisson to touch  admin api's"
+        })
+    }
+    next();
+}
+
+const checkBan = (req, res, next) => {
+  if (req.user.isBanned) {
+    return res.status(403).json({
+      success: false,
+      message: "Your account is banned"
+    });
+  }
+
+  next();
+};
+module.exports = { auth,adminAuth,checkBan };

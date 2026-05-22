@@ -83,6 +83,7 @@ const login = async (req, res) => {
       });
     }
 
+      
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -92,6 +93,13 @@ const login = async (req, res) => {
       });
     }
 
+
+if (user.isBanned) {
+  return res.status(403).json({
+    success: false,
+    message: "Your account is banned"
+  });
+}
     return res.status(200).json({
       success: true,
       message: "User logged in",

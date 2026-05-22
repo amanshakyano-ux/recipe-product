@@ -10,8 +10,9 @@ const {
   getRecipesByCategory,
   searchRecipes
 } = require("../controller/recipeController");
-const { auth } = require("../middleware/authentication");
-router.use(auth);
+const { auth, checkBan } = require("../middleware/authentication");
+router.use(auth,checkBan);
+ 
 router.post("/create", upload.single("recipeImage"), createRecipe);
 router.get("/all", getAllRecipes);
 router.get("/get/:id", getOneRecipe);

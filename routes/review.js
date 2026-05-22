@@ -1,9 +1,9 @@
 const express = require("express")
 const router = express.Router();
 const{createReview,deleteReview,updateReview,getReviewsByRecipe} = require("../controller/reviewController")
-const { auth } = require("../middleware/authentication")
+const { auth, checkBan } = require("../middleware/authentication")
 
-router.use(auth)
+router.use(auth,checkBan)
 
 router.post("/create/:recipeId", createReview )
 router.delete("/delete/:reviewId", deleteReview)
