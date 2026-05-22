@@ -8,7 +8,10 @@ const {
   getOneRecipe,
   getRecipesByUser,
   getRecipesByCategory,
-  searchRecipes
+  searchRecipes,
+  deleteRecipe,
+  updateRecipe
+   
 } = require("../controller/recipeController");
 const { auth, checkBan } = require("../middleware/authentication");
 router.use(auth,checkBan);
@@ -19,4 +22,7 @@ router.get("/get/:id", getOneRecipe);
 router.get("/user", getRecipesByUser);
 router.get("/category/:category", getRecipesByCategory);
 router.get("/search",searchRecipes)
+router.delete("/delete/:id", deleteRecipe);
+router.put("/update/:id", upload.single("recipeImage"), updateRecipe);
+
 module.exports = router;

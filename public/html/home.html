@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Home</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+
+  <nav class="navbar">
+
+    <h2>Recipe App</h2>
+
+    <div class="nav-links">
+
+      <a href="/create-recipe">
+        Create Recipe
+      </a>
+
+      <a href="/my-recipes">
+        My Recipes
+      </a>
+
+      <a href="/favorites">
+        Favorites
+      </a>
+
+      <a href="/collections">
+        Collections
+      </a>
+
+      <a href="/profile">
+        Profile
+      </a>
+
+      <button id="logoutBtn">
+        Logout
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <!-- SEARCH FILTER SECTION -->
+
+  <section class="search-section">
+
+    <input
+      type="text"
+      id="keyword"
+      placeholder="Search recipes..."
+    >
+
+    <select id="difficulty">
+
+      <option value="">
+        All Difficulty
+      </option>
+
+      <option value="easy">
+        Easy
+      </option>
+
+      <option value="medium">
+        Medium
+      </option>
+
+      <option value="hard">
+        Hard
+      </option>
+
+    </select>
+
+    <select id="dietType">
+
+      <option value="">
+        All Diet Types
+      </option>
+
+      <option value="veg">
+        Veg
+      </option>
+
+      <option value="non-veg">
+        Non Veg
+      </option>
+
+    </select>
+
+    <input
+      type="number"
+      id="cookingTime"
+      placeholder="Max Cooking Time"
+    >
+
+    <button id="searchBtn">
+      Search
+    </button>
+
+  </section>
+
+
+  <!-- RECIPES -->
+
+  <section class="recipes-container" id="recipesContainer">
+
+  </section>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js" referrerpolicy="no-referrer"></script>
+
+  <script src="../js/home.js"></script>
+
+</body>
+</html>
