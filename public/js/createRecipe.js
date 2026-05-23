@@ -68,6 +68,9 @@ createRecipeForm.addEventListener(
         formData.append("recipeImage", recipeImage);
       }
 
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Creating...";
+
       const response = await axios.post(
         "/api/recipes/create",
         formData,
@@ -91,8 +94,14 @@ createRecipeForm.addEventListener(
         "Failed to create recipe"
       );
     }
+    finally {
+  submitBtn.disabled = false;
+  submitBtn.innerText = "Create Recipe";
+    }
   }
 );
+
+const submitBtn = createRecipeForm.querySelector("button");
 
 logoutBtn.addEventListener("click", () => {
 

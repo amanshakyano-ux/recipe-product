@@ -37,6 +37,10 @@ const searchRecipes = async (req, res, next) => {
 
     const { count, rows: recipes } = await Recipe.findAndCountAll({
       where: whereClause,
+      include:{
+        model:User,
+        attributes:['id', 'name']
+      },
       limit,
       offset,
       order: [["createdAt", "DESC"]],
@@ -150,8 +154,8 @@ const getAllRecipes = async (req, res, next) => {
     });
 
     if (recipes.length === 0) {
-      return res.status(404).json({
-        success: false,
+      return res.status(200).json({
+        success: true,
         message: "No recipes found for this user",
       });
     }

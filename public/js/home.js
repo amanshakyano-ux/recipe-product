@@ -9,6 +9,9 @@ const recipesContainer = document.getElementById("recipesContainer");
 const logoutBtn = document.getElementById("logoutBtn");
 const searchBtn = document.getElementById("searchBtn");
 
+const searchBtnText = searchBtn.textContent;
+
+
 
 
 const unfollowRecipeMaker = async (userId) => {
@@ -68,7 +71,7 @@ const loadFollowing = async () => {
     followingIds =
       response.data.following.map(
         (follow) => follow.followingId
-      );
+      ) || [];
 
   } catch (err) {
 
@@ -127,7 +130,7 @@ const loadRecipes = async () => {
       }
      
     });
-     console.log("Recipes:", response.data.recipes);
+    
 
     showRecipes(response.data.recipes);
   } catch (err) {
@@ -153,6 +156,8 @@ searchBtn.addEventListener("click", async () => {
     params.append("page", "1");
     params.append("limit", "20");
 
+      // searchBtn.disabled = true;
+      // searchBtn.textContent = "Searching...";
     const response = await axios.get(`/api/recipes/search?${params.toString()}`, {
       headers: {
         Authorization: token,
@@ -163,6 +168,10 @@ searchBtn.addEventListener("click", async () => {
   } catch (err) {
     console.log(err.response?.data || err.message);
     recipesContainer.innerHTML = "<h3>No recipes found</h3>";
+  }
+  finally{
+    searchBtn.disabled = false;
+    searchBtn.textContent = searchBtnText;
   }
 });
 

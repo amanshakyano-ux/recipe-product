@@ -1,5 +1,6 @@
 const loginForm = document.getElementById("loginForm");
-
+const loginBtn = document.getElementById("loginBtn");
+const loginBtnText = loginBtn.textContent;
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -11,6 +12,8 @@ loginForm.addEventListener("submit", async (event) => {
     const password =
       document.getElementById("password").value;
 
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Logging in...";
     const response = await axios.post(
       "/api/login",
       {
@@ -41,5 +44,9 @@ loginForm.addEventListener("submit", async (event) => {
       err.response?.data?.message ||
       "Login failed"
     );
+  }
+  finally{
+    loginBtn.disabled = false;
+    loginBtn.textContent = loginBtnText;
   }
 });

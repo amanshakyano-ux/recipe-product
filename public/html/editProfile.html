@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+
+    <h2>Edit Profile</h2>
+
+    <div class="nav-links">
+
+      <a href="/profile">Profile</a>
+
+      <a href="/home">Home</a>
+
+      <button id="logoutBtn">
+        Logout
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <div class="container">
+
+    <form id="editProfileForm">
+
+      <div class="form-group">
+
+        <label>Name</label>
+
+        <input
+          type="text"
+          id="name"
+          placeholder="Enter your name"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Bio</label>
+
+        <textarea
+          id="bio"
+          placeholder="Enter your bio"
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Profile Image</label>
+
+        <input
+          type="file"
+          id="profileImage"
+          accept="image/*"
+        >
+
+      </div>
+
+
+      <button type="submit" id="updateProfileBtn">
+        Update Profile
+      </button>
+
+    </form>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="../js/editProfile.js"></script>
+
+</body>
+</html>

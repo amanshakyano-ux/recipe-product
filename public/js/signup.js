@@ -1,5 +1,6 @@
 const signupForm = document.getElementById("signupForm");
-
+const signupBtn = document.getElementById("signupBtn");
+const signupBtnText = signupBtn.textContent;
 signupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -24,6 +25,8 @@ signupForm.addEventListener("submit", async (event) => {
       formData.append("profileImage", profileImage);
     }
 
+    signupBtn.disabled = true;
+    signupBtn.textContent = "Signing up...";
     const response = await axios.post(
       "/api/register",
       formData
@@ -41,5 +44,9 @@ signupForm.addEventListener("submit", async (event) => {
       err.response?.data?.message ||
       "Signup failed"
     );
+  }
+  finally{
+    signupBtn.disabled = false;
+    signupBtn.textContent = signupBtnText;
   }
 });

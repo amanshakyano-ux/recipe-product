@@ -78,6 +78,9 @@ app.get("/recipe-detail", (req, res) => {
 app.get("/collection-detail", (req, res) => {
   res.sendFile(path.join(__dirname, "public/html/collectionDetail.html"));
 });
+app.get("/edit-profile",(req,res)=>{
+  res.sendFile(path.join(__dirname,"public/html/editProfile.html"))
+})
 app.use((err,req,res,next)=>{
     return res.status(500).json({
       success:false,

@@ -110,6 +110,62 @@ if (user.isBanned) {
     return res.status(500).json({ success: false, message: err.message });
   }
 };
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, bio } = req.body;
 
+    const user = await User.findByPk(userId);
 
-module.exports = { register,login};
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let profileImage = user.profileImage;
+
+    if (req.file) {
+      const file = req.file;
+      const fileName = `profiles/${Date.now()}-${file.originalname}`;
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      });
+
+      await s3.send(command);
+
+      profileImage = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+    }
+
+    await user.update({
+      name: name || user.name,
+      bio: bio || user.bio,
+      profileImage,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        bio: user.bio,
+        profileImage: user.profileImage,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+module.exports = { register,login,updateProfile };

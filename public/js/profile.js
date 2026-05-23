@@ -17,6 +17,12 @@ const recipesCount = document.getElementById("recipesCount");
 
 const userRecipesContainer = document.getElementById("userRecipesContainer");
 
+const editProfileBtn = document.getElementById("editProfileBtn");
+
+editProfileBtn.addEventListener("click", () => {
+  window.location.href = "/edit-profile";
+});
+
 const loadProfile = async () => {
   try {
     userName.innerText = user.name;
@@ -35,6 +41,8 @@ const loadProfile = async () => {
     const recipes = response.data.recipes;
 
     recipesCount.innerText = recipes.length;
+
+
 
     showUserRecipes(recipes);
   } catch (err) {
@@ -83,12 +91,30 @@ const showUserRecipes = (recipes) => {
       <h3>${recipe.title}</h3>
       <p>${recipe.description}</p>
       <a href="/recipe-detail?id=${recipe.id}">View Details</a>
+      <button onclick="deleteRecipe(${recipe.id})">Delete</button>
     `;
 
     userRecipesContainer.appendChild(card);
   });
 };
 
+deleteRecipe = async (recipeId) => {
+  if (!confirm("Are you sure you want to delete this recipe?")) {
+    return;
+  }
+  try {
+    await axios.delete(`/api/recipes/delete/${recipeId}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    alert("Recipe deleted successfully");
+    await loadProfile();
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+    alert("Failed to delete recipe");
+  }
+};
 logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
