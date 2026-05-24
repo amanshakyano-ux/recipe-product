@@ -175,20 +175,23 @@ const getOneRecipe = async (req, res, next) => {
   try {
     const recipeId = Number(req.params.id);
     const recipe = await Recipe.findOne({
-      where: {
-        id: recipeId
+  where: {
+    id: recipeId,
+  },
+  include: [
+    {
+      model: User,
+      attributes: ["id", "name"],
+    },
+    {
+      model: Review,
+      include: {
+        model: User,
+        attributes: ["id", "name"],
       },
-      include: [
-        {
-          model: User,
-          attributes: ['id', 'name']
-        },
-        {
-          model: Review,
-          include: [User]
-        }
-      ]
-    });
+    },
+  ],
+});
     if (!recipe) {
       return res.status(404).json({
         success: false,

@@ -1,4 +1,4 @@
-const {Review,Recipe} = require("../models")
+const {Review,Recipe,User} = require("../models")
 const isStrInvalid = require("../utils/strValidation")
 const createReview = async(req,res,next)=>{
  try{
@@ -21,7 +21,7 @@ const createReview = async(req,res,next)=>{
             message:"Invalid input data"
         })
     }   
-    console.log(recipeId,"recipeId");
+    
     const recipe = await Recipe.findByPk(recipeId);
     if(!recipe){
         return res.status(404).json({
@@ -29,7 +29,7 @@ const createReview = async(req,res,next)=>{
             message:"Recipe not found"
         })
     }
-    console.log(recipe,"recipe");
+     
     const isReviewed = await Review.findOne({where:{recipeId,userId}});
     if(isReviewed){
         return res.status(400).json({
@@ -80,7 +80,13 @@ const deleteReview = async(req,res,next)=>{
 const getReviewsByRecipe = async(req,res,next)=>{
     try{
         const recipeId = Number(req.params.recipeId); 
-        const reviews = await Review.findAll({where:{recipeId}});
+        const reviews = await Review.findAll({
+            where:{recipeId},
+            include:{
+                model:User,
+                attributes:["id","name"]
+        }
+        });
         res.status(200).json({
             success:true,
             totalReviews:reviews.length,
@@ -90,38 +96,38 @@ const getReviewsByRecipe = async(req,res,next)=>{
         next(err)
     }
 }
-const updateReview = async(req,res,next)=>{
-    try{
-        const reviewId = Number(req.params.reviewId);
-        const userId = req.user.id;
-        const { rating, comment } = req.body;
-if((rating < 1 )||( rating> 5)){
-            return res.status(400).json({
-                success:false,
-                message:"Rating should be between 1 and 5"
-            })      
-           }
-        const review = await Review.findByPk(reviewId);
-        if(!review){
-            return res.status(404).json({
-                success:false,
-                message:"Review not found"
-            })
-        }
-        if(review.userId !== userId){
-            return res.status(403).json({
-                success:false,
-                message:"You are not the owner of this review"
-            })
-        }
-        await review.update({ rating, comment });
-        res.status(200).json({
-            success:true,
-            message:"Review updated successfully",
-            review
-        })
-    }catch(err){
-        next(err)
-    }
-}
-module.exports = {createReview, deleteReview, getReviewsByRecipe, updateReview}
+// const updateReview = async(req,res,next)=>{
+//     try{
+//         const reviewId = Number(req.params.reviewId);
+//         const userId = req.user.id;
+//         const { rating, comment } = req.body;
+// if((rating < 1 )||( rating> 5)){
+//             return res.status(400).json({
+//                 success:false,
+//                 message:"Rating should be between 1 and 5"
+//             })      
+//            }
+//         const review = await Review.findByPk(reviewId);
+//         if(!review){
+//             return res.status(404).json({
+//                 success:false,
+//                 message:"Review not found"
+//             })
+//         }
+//         if(review.userId !== userId){
+//             return res.status(403).json({
+//                 success:false,
+//                 message:"You are not the owner of this review"
+//             })
+//         }
+//         await review.update({ rating, comment });
+//         res.status(200).json({
+//             success:true,
+//             message:"Review updated successfully",
+//             review
+//         })
+//     }catch(err){
+//         next(err)
+//     }
+// }
+module.exports = {createReview, getReviewsByRecipe, deleteReview}

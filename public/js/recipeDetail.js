@@ -1,5 +1,5 @@
 const token = localStorage.getItem("token");
-
+const user = JSON.parse(localStorage.getItem("user"));
 if (!token) {
   window.location.href = "/login";
 }
@@ -95,15 +95,49 @@ const showReviews = (reviews) => {
     div.className = "recipe-card";
 
     div.innerHTML = `
+     <p><b>Reviewer:</b> ${review.user?.name  || "Unknown User"}</p>
       <p><b>Rating:</b> ${review.rating}</p>
-
+       
       <p>${review.comment}</p>
+      ${
+      review.userId === user.id ?
+      `
+     <button  style="
+          width:auto;
+          padding:6px 12px;
+          font-size:14px;
+          cursor:pointer;
+          display:inline-block;
+        " onclick="deleteReview(${review.id})" id="deleteReviewBtn">Delete</button>
+      `
+      :""
+    }
     `;
 
     reviewsContainer.appendChild(div);
   });
 };
 
+deleteReview = async (reviewId) => {
+
+  if (!confirm("Are you sure you want to delete this review?")) {
+    return;
+  }
+  try{
+
+    const response = await axios.delete(`/api/reviews/delete/${reviewId}`,{
+      headers: {
+        Authorization: token,
+      },  
+    })
+    showReviews(response.data.reviews);
+
+  }catch(err)
+  {
+    next(err)
+  }
+   
+}
 reviewForm.addEventListener(
   "submit",
   async (event) => {
