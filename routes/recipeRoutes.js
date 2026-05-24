@@ -20,9 +20,9 @@ router.post("/create", upload.single("recipeImage"), createRecipe);
 router.get("/all", getAllRecipes);
 router.get("/get/:id", getOneRecipe);
 router.get("/user", getRecipesByUser);
-router.get("/category/:category", getRecipesByCategory);
+// router.get("/category/:category", getRecipesByCategory);
 router.get("/search",searchRecipes)
 router.delete("/delete/:id", deleteRecipe);
-router.put("/update/:id", upload.single("recipeImage"), updateRecipe);
+// router.put("/update/:id", upload.single("recipeImage"), updateRecipe);
 
 module.exports = router;

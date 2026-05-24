@@ -94,43 +94,66 @@ const showReviews = (reviews) => {
 
     div.className = "recipe-card";
 
-    div.innerHTML = `
-     <p><b>Reviewer:</b> ${review.user?.name  || "Unknown User"}</p>
-      <p><b>Rating:</b> ${review.rating}</p>
-       
-      <p>${review.comment}</p>
-      ${
-      review.userId === user.id ?
-      `
-     <button  style="
-          width:auto;
-          padding:6px 12px;
-          font-size:14px;
-          cursor:pointer;
-          display:inline-block;
-        " onclick="deleteReview(${review.id})" id="deleteReviewBtn">Delete</button>
-      `
-      :""
-    }
-    `;
+    
+ div.innerHTML = `
+  <p><b>Reviewer:</b> ${review.user?.name || "Unknown User"}</p>
 
+  <p><b>Rating:</b> ${review.rating}</p>
+
+  <p>${review.comment}</p>
+
+  ${
+    user.role === "admin" || review.userId === user.id
+      ? `
+        <button
+          style="
+            width:auto;
+            padding:6px 12px;
+            font-size:14px;
+            cursor:pointer;
+            display:inline-block;
+          "
+          onclick="deleteReview(${review.id})"
+          id="deleteReviewBtn"
+        >
+          Delete
+        </button>
+      `
+      : ""
+  }
+`;
     reviewsContainer.appendChild(div);
   });
 };
 
 deleteReview = async (reviewId) => {
 
+  if(!reviewId)
+  {
+    return alert("Invalid review ID");
+  }
   if (!confirm("Are you sure you want to delete this review?")) {
     return;
   }
   try{
-
-    const response = await axios.delete(`/api/reviews/delete/${reviewId}`,{
+if(user.role === "admin")
+{
+  const response = await axios.delete(`/api/admin/deleteReview/${reviewId}`,{
       headers: {
         Authorization: token,
       },  
     })
     showReviews(response.data.reviews);
+}else
+{
+
+  const response = await axios.delete(`/api/reviews/delete/${reviewId}`,{
+    headers: {
+      Authorization: token,
+    },  
+  })
+  showReviews(response.data.reviews);
+}
 
   }catch(err)
   {

@@ -6,7 +6,7 @@ router.use(auth,checkBan)
 
 router.post("/create", createCollection)
 router.post("/add/:collectionId/:recipeId", addRecipeToCollection)
-router.delete("/remove/:collectionId/:recipeId", removeRecipeFromCollection)
+// router.delete("/remove/:collectionId/:recipeId", removeRecipeFromCollection)
 router.get("/mycollections", getUserCollections)  
 router.delete("/delete/:collectionId", removeCollection)
 router.get("/:collectionId/recipes", getCollectionRecipes)  

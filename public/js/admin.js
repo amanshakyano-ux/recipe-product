@@ -69,6 +69,7 @@ const loadRecipes = async () => {
       <img src="${recipe.imageUrl}" alt="${recipe.title}">
       <h3>${recipe.title}</h3>
       <p>${recipe.description}</p>
+      <a  style="margin-bottom: 10px;" href="/recipe-detail?id=${recipe.id}">View Details</a>
       <button onclick="deleteRecipe(${recipe.id})">Delete Recipe</button>
     `;
 
