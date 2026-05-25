@@ -1,5 +1,6 @@
 const isStrInvalid = require("../utils/strValidation");
 const { User } = require("../models/users");
+const { Recipe } = require("../models");
 const s3 = require("../utils/s3Service");
 const bcrypt = require("bcrypt");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
@@ -168,4 +169,47 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { register,login,updateProfile };
+const getUserProfile = async (req, res, next) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    if (isNaN(userId) || userId <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
+
+    const user = await User.findByPk(userId, {
+      attributes: ["id", "name", "bio", "profileImage", "email"],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const recipes = await Recipe.findAll({
+      where: { userId },
+      attributes: ["id", "title", "description", "imageUrl"],
+    });
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        bio: user.bio,
+        profileImage: user.profileImage,
+        email: user.email,
+      },
+      recipes,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register,login,updateProfile,getUserProfile };

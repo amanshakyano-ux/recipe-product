@@ -159,11 +159,29 @@ a{
 .recipe-detail-container{
   width:90%;
   margin:30px auto;
+  max-width:900px;
 }
 
 .recipe-detail-container .recipe-card{
-  max-width:800px;
-  margin:auto;
+  max-width:100%;
+  margin:0 auto;
+}
+
+.creator-info-inline{
+  margin:15px 0;
+  padding-top:15px;
+  border-top:1px solid #eee;
+}
+
+.creator-name-inline{
+  color:#007bff;
+  text-decoration:underline;
+  cursor:pointer;
+  transition:color 0.3s;
+}
+
+.creator-name-inline:hover{
+  color:#0056b3;
 }
 
 .recipe-detail-container img{
@@ -365,4 +383,25 @@ a{
   width:auto;
   margin-top:10px;
   padding:8px 14px;
+}
+#reviewsContainer{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.review-card{
+  background:#fff;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  border-left:5px solid black;
+}
+
+.review-card p{
+  margin:8px 0;
+}
+
+.review-card button{
+  margin-top:10px;
 }

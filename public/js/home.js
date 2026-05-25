@@ -1,5 +1,4 @@
 const token = localStorage.getItem("token");
-let followingIds = [];
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 if (!token) {
   window.location.href = "/login";
@@ -10,75 +9,6 @@ const logoutBtn = document.getElementById("logoutBtn");
 const searchBtn = document.getElementById("searchBtn");
 
 const searchBtnText = searchBtn.textContent;
-
-
-
-
-const unfollowRecipeMaker = async (userId) => {
-  try {
-    await axios.post(
-      `/api/follows/unfollowUser/${userId}`,
-      {},
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-
-    alert("User unfollowed successfully");
-
-    await loadFollowing();
-    await loadRecipes();
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-    alert("Failed to unfollow user");
-  }
-};
- const followRecipeMaker = async (userId) => {
-  try {
-    await axios.post(
-      `/api/follows/followUser/${userId}`,
-      {},
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-
-    alert("You are now following the recipe maker!");
-
-    await loadFollowing();
-    await loadRecipes();
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-    alert("Failed to follow the recipe maker");
-  }
-};
-const loadFollowing = async () => {
-  try {
-
-    const response = await axios.get(
-      "/api/follows/getAllfollowing",
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-
-    followingIds =
-      response.data.following.map(
-        (follow) => follow.followingId
-      ) || [];
-
-  } catch (err) {
-
-    console.log(err.response?.data || err.message);
-
-  }
-};
 const showRecipes = (recipes) => {
   recipesContainer.innerHTML = "";
 
@@ -98,23 +28,12 @@ const showRecipes = (recipes) => {
       <p><b>Difficulty:</b> ${recipe.difficulty}</p>
       <p><b>Diet:</b> ${recipe.dietType}</p>
       <p><b>Cooking Time:</b> ${recipe.cookingTime} min</p>
-      <a href="/recipe-detail?id=${recipe.id}">View Details</a>
-      <p><small>Created by: ${
+      <p><b>Created by : </b>${
         recipe.user.id === loggedInUser.id ? "You":recipe.user.name
        }</small></p>
-${
-  recipe.user.id === loggedInUser.id
-  ?
-  ""
-  :
-  followingIds.includes(recipe.user.id)
-    ? `<button onclick="unfollowRecipeMaker(${recipe.user.id})">
-         Unfollow
-       </button>`
-    : `<button onclick="followRecipeMaker(${recipe.user.id})">
-         Follow
-       </button>`
-}
+      <button onclick="window.location.href='/recipe-detail?id=${recipe.id}'" style="width:100%; margin-top:10px;">
+        View More
+      </button>
     `;
 
     recipesContainer.appendChild(card);
@@ -182,7 +101,6 @@ logoutBtn.addEventListener("click", () => {
 });
 
  window.addEventListener("DOMContentLoaded", async () => {
-  await loadFollowing();
   await loadRecipes();
 });
  
