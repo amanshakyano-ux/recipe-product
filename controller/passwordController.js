@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const { User, ForgotPasswordRequest } = require("../models");
 const isStrInvalid = require("../utils/strValidation");
 const { sendResetPasswordMail } = require("../utils/mailService");
+const sequelize = require("../utils/db-connection");
+
 
 const forgotPassword = async (req, res, next) => {
   try {
@@ -60,12 +62,13 @@ const resetPasswordPage = async (req, res, next) => {
     });
 
     if (!request) {
+      
       return res.status(400).send("<h3>Reset link expired or invalid</h3>");
     }
 
     return res.status(200).send(`
       <html>
-        <body>
+        <body style="margin:200px">
           <h3>Reset Your Password</h3>
           <form action="/api/password/update/${id}" method="POST">
             <input type="password" name="newPassword" placeholder="Enter new password" required />
@@ -80,11 +83,12 @@ const resetPasswordPage = async (req, res, next) => {
 };
 
 const updatePassword = async (req, res, next) => {
+  const t =  await sequelize.transaction();
   try {
     const { id } = req.params;
     const { newPassword } = req.body;
-
     if (isStrInvalid(newPassword)) {
+      await t.rollback();
       return res.status(400).json({
         success: false,
         message: "New password is required",
@@ -94,34 +98,59 @@ const updatePassword = async (req, res, next) => {
     const request = await ForgotPasswordRequest.findOne({
       where: {
         id,
-        isActive: true,
+        isActive: true
       },
+      
+        transaction:t
     });
 
     if (!request) {
+      await t.rollback()
       return res.status(400).send("<h3>Reset link expired or invalid</h3>");
     }
 
-    const user = await User.findByPk(request.userId);
+    const user = await User.findByPk(request.userId,{transaction:t});
 
     if (!user) {
+      await t.rollback()
       return res.status(404).send("<h3>User not found</h3>");
     }
-
+     
+    if( await isPasswordSame(newPassword,user.password))
+    {
+      
+       return res.status(400).send(`<html>
+        <body>
+        <h3>Can't use old password!</h3>
+        <a href="${process.env.BASE_URL}/api/password/reset/${id}">Create Again !!</a>
+        </body></html>
+    `);
+    }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
-    await user.save();
+    await user.save({transaction:t});
 
     request.isActive = false;
-    await request.save();
-
+    console.log("Request",request)
+    await request.save({transaction:t});
+    await t.commit();
     return res.status(200).send("<h3>Password updated successfully ✅</h3>");
   } catch (err) {
+    await t.rollback()
     next(err);
   }
 };
 
+async function isPasswordSame  (newPassword,orignalPass){
+   const isMatch = await bcrypt.compare(newPassword,orignalPass)
+   if(isMatch)
+   {
+    return true;
+   }
+   return false;
+
+}
 module.exports = {
   forgotPassword,
   resetPasswordPage,
