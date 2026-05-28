@@ -10,8 +10,17 @@ const reviewRoutes = require("./routes/review")
  const adminRoutes = require("./routes/adminRoutes")
  const passwordRoutes = require("./routes/passwordRoutes");
  const path = require("path");
+ const Sentry = require("@sentry/node");
 
 require("./models");
+
+if (process.env.SENTRY_DSN) {
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        tracesSampleRate: 1.0,
+    });
+}
+
 const app = express()
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
@@ -85,7 +94,9 @@ app.get("/user-profile", (req, res) => {
 app.get("/edit-profile",(req,res)=>{
   res.sendFile(path.join(__dirname,"public/html/editProfile.html"))
 })
+
 app.use((err,req,res,next)=>{
+    Sentry.captureException(err);
     return res.status(500).json({
       success:false,
       message:err.message
